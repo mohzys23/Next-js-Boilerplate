@@ -5,7 +5,8 @@
     "counter_link": "Counter",
     "portfolio_link": "Portfolio",
     "sign_in_link": "Sign in",
-    "sign_up_link": "Sign up"
+    "sign_up_link": "Sign up",
+    "customer_profile_link": "Customer Profiles"
   },
   "BaseTemplate": {
     "description": "Starter code for your Nextjs Boilerplate with Tailwind CSS",
@@ -71,5 +72,22 @@
     "dashboard_link": "Dashboard",
     "user_profile_link": "Manage your account",
     "sign_out": "Sign out"
+  },
+  "CustomerProfile": {
+    "meta_title": "Customer Profiles",
+    "meta_description": "Manage customer profiles",
+    "title": "Customer Profiles",
+    "form": {
+      "customer_name": "Customer Name",
+      "company_name": "Company Name",
+      "save": "Save Profile",
+      "update": "Update Profile",
+      "cancel": "Cancel"
+    },
+    "list": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "no_customers": "No customers found"
+    }
   }
 }

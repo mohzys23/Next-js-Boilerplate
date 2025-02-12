@@ -1,4 +1,4 @@
-import { integer, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
+import { integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
 // This file defines the structure of your database tables using the Drizzle ORM.
 
@@ -18,4 +18,12 @@ export const counterSchema = pgTable('counter', {
     .$onUpdate(() => new Date())
     .notNull(),
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+});
+
+export const customerProfileSchema = pgTable('customer_profiles', {
+  id: serial('id').primaryKey(),
+  customerName: text('customer_name').notNull(),
+  companyName: text('company_name').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
 });
