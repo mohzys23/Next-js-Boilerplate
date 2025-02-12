@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const customerProfileSchema = z.object({
-  id: z.number().optional(),
   customerName: z.string().min(1, 'Customer name is required'),
   companyName: z.string().min(1, 'Company name is required'),
 });
@@ -11,7 +11,11 @@ const customerProfileSchema = z.object({
 type CustomerProfileFormData = z.infer<typeof customerProfileSchema>;
 
 type CustomerProfileFormProps = {
-  initialData?: CustomerProfileFormData;
+  initialData?: {
+    id?: number;
+    customerName: string;
+    companyName: string;
+  };
   onSubmit: (data: CustomerProfileFormData) => Promise<void>;
   onCancel?: () => void;
 };
@@ -24,14 +28,36 @@ export const CustomerProfileForm = ({
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<CustomerProfileFormData>({
     resolver: zodResolver(customerProfileSchema),
-    defaultValues: initialData,
+    defaultValues: initialData || {
+      customerName: '',
+      companyName: '',
+    },
   });
 
+  // Reset form when initialData changes
+  useEffect(() => {
+    if (initialData) {
+      reset(initialData);
+    }
+  }, [initialData, reset]);
+
+  const onSubmitWrapper = async (data: CustomerProfileFormData) => {
+    await onSubmit(data);
+    if (!initialData) {
+      // Only reset if we're adding a new customer (not editing)
+      reset({
+        customerName: '',
+        companyName: '',
+      });
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmitWrapper)} className="space-y-4 mb-8">
       <div>
         <label
           htmlFor="customerName"
@@ -76,7 +102,13 @@ export const CustomerProfileForm = ({
         {onCancel && (
           <button
             type="button"
-            onClick={onCancel}
+            onClick={() => {
+              onCancel();
+              reset({
+                customerName: '',
+                companyName: '',
+              });
+            }}
             className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Cancel

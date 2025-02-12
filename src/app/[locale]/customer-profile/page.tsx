@@ -37,14 +37,18 @@ export default function CustomerProfilePage() {
         setCustomers(prevCustomers =>
           prevCustomers.map(customer =>
             customer.id === editingCustomer.id
-              ? { ...customer, ...data }
+              ? {
+                  ...customer,
+                  ...data,
+                  updatedAt: new Date().toISOString(),
+                }
               : customer,
           ),
         );
       } else {
         // Create new customer
         const newCustomer: CustomerProfile = {
-          id: Date.now(), // Use timestamp as ID
+          id: Date.now(),
           ...data,
           createdAt: new Date().toISOString(),
         };
@@ -54,6 +58,16 @@ export default function CustomerProfilePage() {
     } catch (error) {
       console.error('Failed to save customer:', error);
     }
+  };
+
+  const handleEdit = (customer: CustomerProfile) => {
+    // Explicitly set the form data when editing
+    setEditingCustomer({
+      id: customer.id,
+      customerName: customer.customerName,
+      companyName: customer.companyName,
+      createdAt: customer.createdAt,
+    });
   };
 
   const handleDelete = async (id: number) => {
@@ -66,6 +80,10 @@ export default function CustomerProfilePage() {
     }
   };
 
+  const handleCancel = () => {
+    setEditingCustomer(null);
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -73,17 +91,20 @@ export default function CustomerProfilePage() {
   return (
     <div className="mx-auto max-w-7xl py-8">
       <div className="px-4 sm:px-6 lg:px-8">
-        <h1 className="mb-6 text-2xl font-bold">Customer Profiles</h1>
+        <h1 className="mb-6 text-2xl font-bold">
+          {editingCustomer ? 'Edit Customer' : 'Add New Customer'}
+        </h1>
 
         <CustomerProfileForm
+          key={editingCustomer?.id || 'new'} // Add key to force form reset
           initialData={editingCustomer || undefined}
           onSubmit={handleSubmit}
-          onCancel={editingCustomer ? () => setEditingCustomer(null) : undefined}
+          onCancel={handleCancel}
         />
 
         <CustomerProfileList
           customers={customers}
-          onEdit={setEditingCustomer}
+          onEdit={handleEdit}
           onDelete={handleDelete}
         />
       </div>
